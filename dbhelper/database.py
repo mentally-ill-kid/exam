@@ -15,7 +15,6 @@ class Database:
                 user=self.user,
                 password=self.password,
                 database=self.database,
-                port=3306
             )
             print("Database connection successful.")
         except Error as e:
@@ -39,3 +38,9 @@ class Database:
         except Error as e:
             print(f"Error executing query: {e}")
             return None
+
+    def login_validation(self, email, passwd):
+        query = f"SELECT * FROM users WHERE email='{email}' AND passwd='{passwd}'"
+        result = self.execute_query(query)
+        print(f"Login validation result: {result}")
+        return result is not None and len(result) > 0
