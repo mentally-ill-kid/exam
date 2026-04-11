@@ -40,7 +40,12 @@ class Database:
             return None
 
     def login_validation(self, email, passwd):
-        query = f"SELECT * FROM users WHERE email='{email}' AND passwd='{passwd}'"
+        query = f"SELECT email, passwd FROM users WHERE email='{email}' AND passwd='{passwd}'"
         result = self.execute_query(query)
+        print(type(result))
+        # email = result[0]
+        # print(email[3] + " - email")
+        # password = result[0]
+        # print(password[4] + " - email")
         print(f"Login validation result: {result}")
         return result is not None and len(result) > 0
