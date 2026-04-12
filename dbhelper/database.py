@@ -1,6 +1,9 @@
 from mysql.connector import MySQLConnection, Error
 
+
 class Database:
+    """Класс для управления соединением с БД MySQL."""
+    
     def __init__(self, host, user, password, database):
         self.host = host
         self.user = user
@@ -9,6 +12,7 @@ class Database:
         self.connection = None
 
     def connect(self):
+        """Установить соединение с БД."""
         try:
             self.connection = MySQLConnection(
                 host=self.host,
@@ -16,36 +20,45 @@ class Database:
                 password=self.password,
                 database=self.database,
             )
-            print("Database connection successful.")
+            print("✓ Соединение с БД установлено.")
+            return True
         except Error as e:
-            print(f"Error connecting to database: {e}")
+            print(f"✗ Ошибка подключения: {e}")
+            return False
 
     def disconnect(self):
+        """Закрыть соединение с БД."""
         if self.connection:
             self.connection.close()
-            print("Database connection closed.")
+            print("✓ Соединение с БД закрыто.")
 
-    def execute_query(self, query):
+    def execute_query(self, query, params=None):
+        """Выполнить SQL запрос с параметризацией для защиты от инъекций."""
         if not self.connection:
-            print("No database connection.")
+            print("✗ Нет соединения с БД.")
             return None
         
-        cursor = self.connection.cursor()
+        cursor = None
         try:
-            cursor.execute(query)
+            cursor = self.connection.cursor()
+            cursor.execute(query, params or ())
             result = cursor.fetchall()
             return result
         except Error as e:
-            print(f"Error executing query: {e}")
+            print(f"✗ Ошибка выполнения запроса: {e}")
             return None
+        finally:
+            if cursor:
+                cursor.close()
 
-    def login_validation(self, email, passwd):
-        query = f"SELECT email, passwd FROM users WHERE email='{email}' AND passwd='{passwd}'"
-        result = self.execute_query(query)
-        print(type(result))
-        # email = result[0]
-        # print(email[3] + " - email")
-        # password = result[0]
-        # print(password[4] + " - email")
-        print(f"Login validation result: {result}")
-        return result is not None and len(result) > 0
+    def login_validation(self, email, password):
+        """Проверить учетные данные пользователя (параметризованный запрос)."""
+        query = "SELECT id, email FROM users WHERE email = %s AND passwd = %s"
+        result = self.execute_query(query, (email, password))
+        
+        if result and len(result) > 0:
+            print(f"✓ Вход выполнен: {email}")
+            return True
+        else:
+            print("✗ Неверные учетные данные.")
+            return False
