@@ -14,9 +14,13 @@
 
 `python3 -m venv venv`
 
-Активировать виртуальное окружение
+Активировать виртуальное окружение для Linux
 
-`venv/bin/activate`
+`source venv/bin/activate`
+
+Активировать виртуальное окружения для Windows
+
+`venv/Scripts/Activate`
 
 Скачать зависимости
 
