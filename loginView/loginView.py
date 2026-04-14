@@ -54,18 +54,26 @@ class LoginWindow:
             messagebox.showwarning("Ошибка", "Пожалуйста, введите все данные")
             return
         
-        if self.db.login_validation(login, password):
-            self._open_main_window()
+        user = self.db.login_validation(login, password)
+        if user:
+            self._open_main_window(user)
         else:
             messagebox.showerror("Ошибка", "Невернные учетные данные")
 
     def _on_guest_click(self):
-        self._open_main_window()
+        # Гостевой пользователь по умолчанию
+        guest_user = {
+            "id": 0,
+            "name": "Гость",
+            "email": "guest@example.com",
+            "role": "guest"
+        }
+        self._open_main_window(guest_user)
 
-    def _open_main_window(self):
+    def _open_main_window(self, user):
         self.root.destroy()
         main_root = tk.Tk()
-        main_window = MainWindow(main_root, self.db)
+        main_window = MainWindow(main_root, self.db, user)
         main_root.mainloop()
 
 

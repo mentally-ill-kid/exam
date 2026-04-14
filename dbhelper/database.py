@@ -48,12 +48,18 @@ class Database:
                 cursor.close()
 
     def login_validation(self, email, password):
-        query = "SELECT id, email FROM users WHERE email = %s AND passwd = %s"
+        query = "SELECT id, email, name, role FROM users WHERE email = %s AND passwd = %s"
         result = self.execute_query(query, (email, password))
         
         if result and len(result) > 0:
-            print(f"✓ Вход выполнен: {email}")
-            return True
+            user_id, user_email, user_name, user_role = result[0]
+            print(f"✓ Вход выполнен: {user_email}")
+            return {
+                "id": user_id,
+                "email": user_email,
+                "name": user_name,
+                "role": user_role
+            }
         else:
             print("✗ Неверные учетные данные.")
-            return False
+            return None

@@ -3,9 +3,10 @@ import tkinter as tk
 
 class MainWindow:
     
-    def __init__(self, root, db=None):
+    def __init__(self, root, db=None, user=None):
         self.root = root
         self.db = db
+        self.user = user
         self.current_panel = None
         self.active_button = None
         self._init_window()
@@ -30,11 +31,12 @@ class MainWindow:
         self.center_column = tk.Frame(self.root, bg="#202330")
         self.center_column.grid(row=0, column=1, sticky="nsew")
         
-        # Правая колонка
-        right_column = tk.Frame(self.root, bg="#2a2f3f")
-        right_column.grid(row=0, column=2, sticky="nsew")
+        # Правая колонка с информацией пользователя
+        self.right_column = tk.Frame(self.root, bg="#2a2f3f")
+        self.right_column.grid(row=0, column=2, sticky="nsew")
         
         self._create_navigation()
+        self._create_user_panel()
         self._show_home()
 
     def _create_navigation(self):
@@ -91,6 +93,71 @@ class MainWindow:
             cursor="hand2"
         )
         btn.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
+
+    def _create_user_panel(self):
+        """Создаёт панель с информацией о пользователе"""
+        if not self.user:
+            return
+        
+        self.right_column.columnconfigure(0, weight=1)
+        self.right_column.rowconfigure(0, weight=1)
+        self.right_column.rowconfigure(1, weight=0)
+        
+        # Контейнер для центрирования
+        container = tk.Frame(self.right_column, bg="#2a2f3f")
+        container.grid(row=0, column=0, sticky="nsew", padx=10, pady=20)
+        
+        # Иконка профиля (большой кружок с инициалами)
+        profile_icon_frame = tk.Frame(container, bg="#292e42", width=80, height=80, relief=tk.RAISED, bd=2)
+        profile_icon_frame.pack(expand=False, pady=(0, 15))
+        profile_icon_frame.pack_propagate(False)
+        
+        # Инициалы пользователя
+        initials = "".join([word[0].upper() for word in self.user['name'].split() if word])
+        initials_label = tk.Label(
+            profile_icon_frame,
+            text=initials or "U",
+            fg="#bb9af7",
+            bg="#292e42",
+            font=("Arial", 28, "bold")
+        )
+        initials_label.pack(expand=True)
+        
+        # Имя пользователя
+        name_label = tk.Label(
+            container,
+            text=self.user['name'],
+            fg="white",
+            bg="#2a2f3f",
+            font=("Arial", 12, "bold"),
+            wraplength=180,
+            justify=tk.CENTER
+        )
+        name_label.pack()
+        
+        # Роль
+        role_label = tk.Label(
+            container,
+            text=self.user['role'],
+            fg="#7aa2f7",
+            bg="#2a2f3f",
+            font=("Arial", 9),
+            wraplength=180,
+            justify=tk.CENTER
+        )
+        role_label.pack(pady=(5, 0))
+        
+        # Почта
+        email_label = tk.Label(
+            container,
+            text=self.user['email'],
+            fg="#9099a8",
+            bg="#2a2f3f",
+            font=("Arial", 8),
+            wraplength=180,
+            justify=tk.CENTER
+        )
+        email_label.pack(pady=(3, 0))
 
     def _clear_center_panel(self):
         """Очищает центральную панель"""
