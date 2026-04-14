@@ -2,7 +2,6 @@ from mysql.connector import MySQLConnection, Error
 
 
 class Database:
-    """Класс для управления соединением с БД MySQL."""
     
     def __init__(self, host, user, password, database):
         self.host = host
@@ -12,7 +11,6 @@ class Database:
         self.connection = None
 
     def connect(self):
-        """Установить соединение с БД."""
         try:
             self.connection = MySQLConnection(
                 host=self.host,
@@ -27,13 +25,11 @@ class Database:
             return False
 
     def disconnect(self):
-        """Закрыть соединение с БД."""
         if self.connection:
             self.connection.close()
             print("✓ Соединение с БД закрыто.")
 
     def execute_query(self, query, params=None):
-        """Выполнить SQL запрос с параметризацией для защиты от инъекций."""
         if not self.connection:
             print("✗ Нет соединения с БД.")
             return None
@@ -52,7 +48,6 @@ class Database:
                 cursor.close()
 
     def login_validation(self, email, password):
-        """Проверить учетные данные пользователя (параметризованный запрос)."""
         query = "SELECT id, email FROM users WHERE email = %s AND passwd = %s"
         result = self.execute_query(query, (email, password))
         
