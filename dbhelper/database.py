@@ -63,3 +63,29 @@ class Database:
         else:
             print("✗ Неверные учетные данные.")
             return None
+
+    def get_all_goods(self):
+        query = """
+            SELECT g.id, g.article, g.name, g.description, g.price, 
+                   g.photo, g.discount, g.amount
+            FROM goods g
+        """
+        return self.execute_query(query)
+
+    def get_all_orders(self):
+        query = """
+            SELECT o.id, o.user_id, u.name as user_name, o.date, 
+                   os.status, o.total_sum
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.id
+            LEFT JOIN `order-status` os ON o.id = os.id
+        """
+        return self.execute_query(query)
+
+    def get_all_users(self):
+        query = "SELECT id, name, email, role FROM users"
+        return self.execute_query(query)
+
+    def get_all_suppliers(self):
+        query = "SELECT id, name FROM suppliers"
+        return self.execute_query(query)

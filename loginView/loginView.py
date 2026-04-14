@@ -61,7 +61,6 @@ class LoginWindow:
             messagebox.showerror("Ошибка", "Невернные учетные данные")
 
     def _on_guest_click(self):
-        # Гостевой пользователь по умолчанию
         guest_user = {
             "id": 0,
             "name": "Гость",
